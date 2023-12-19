@@ -1,0 +1,44 @@
+/<?php
+session_start();
+
+$conexion = mysqli_connect("localhost", "root", "123", "CatalogoMateriaBD");
+
+if (!$conexion) {
+    die("La conexión a la base de datos falló: " . mysqli_connect_error());
+}
+
+if (isset($_SESSION['usuario'])) {
+    $usuario = $_SESSION['usuario'];
+
+    $consulta = "SELECT p.UsuarioPersona, r.RolNombre
+                 FROM persona p, rolpersona r
+                 WHERE p.RolPersonaId = r.RolPersonaId AND p.UsuarioPersona = '$usuario'";
+    $resultado = mysqli_query($conexion, $consulta);
+
+    if ($fila = mysqli_fetch_assoc($resultado)) {
+        $rolNombre = $fila['RolNombre'];
+        $saludo = "¡Bienvenido, $usuario! Tu Rol es: $rolNombre";
+
+        if ($rolNombre == "Profesor") {
+            $archivo = "indexP.php";
+        } elseif ($rolNombre == "Estudiante") {
+            $archivo = "indexE.php";
+        } elseif ($rolNombre == "Admin") {
+            // Si el rol es "SUPER ADMIN", establecer las pestañas adicionales
+            $archivo = "indexP.php"; // Cambia a la página predeterminada del SUPER ADMIN si es necesario
+            $mostrarPestanasAdicionales = true;
+        } else {
+            $archivo = "indexP.php";
+        }
+    } else {
+        $saludo = "¡Bienvenido, $usuario!";
+        $archivo = "indexP.php";
+    }
+
+} else {
+    header("location:../Login/Login_Form.php");
+    exit();
+}
+
+mysqli_close($conexion);
+?>*\
