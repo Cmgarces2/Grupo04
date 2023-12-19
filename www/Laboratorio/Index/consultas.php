@@ -8,8 +8,7 @@
 </head>
 <body>
 	<?php
-		require_once(__DIR__ . '/../constantes.php');
-
+		require_once("../constantes.php");
 		include_once("../Clases/class.consultas.php");
 		
 		$cn = conectar();
